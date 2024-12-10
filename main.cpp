@@ -33,7 +33,7 @@ float * generateInput(int & n, std::string path) {
 
 int main(int argc, char *argv[]) {
     try {
-        std::string input = "25";
+        std::string input = "16";
         float* data;
         int n;
         try {
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
         }
         float* experiment1 = new float[n];
         float* experiment2 = new float[n];
-        std::memcpy(experiment1, data, n * sizeof(float));
-        std::memcpy(experiment2, data, n * sizeof(float));
+        memcpy(experiment1, data, n * sizeof(float));
+        memcpy(experiment2, data, n * sizeof(float));
         baselineVectorLog(experiment1, n);
         std::cout << "Done baseline" << "\n";
         avxVectorLog(experiment2, n);

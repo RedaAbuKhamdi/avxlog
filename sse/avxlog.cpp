@@ -8,26 +8,18 @@ void avxVectorLog(float* input, int& n) {
 	float logValue = 0;
 	int blockSize = 8;
 	for (int i = 0; i < std::ceil(n / blockSize); ++i) {
-		__m256 vectorized = _mm256_load_ps(input + i * blockSize);
-		for (int j = 0; j < 32; j++) {
-			vectorized = _mm256_div_ps(vectorized, vectorTwos);
-			__m256 condition = _mm256_cmp_ps(vectorized, vectorOnes, 1);
-			if (_mm256_movemask_ps(condition) == 255) {
-				binaryCoeff = j + 1;
-			}
-		}
-		binaryCoeff = binaryCoeff * LN2;
+		std::cout << "ITER" << "\n";
+		__m256 vectorized = _mm256_loadu_ps(input + i * blockSize);
 		__m256 result = _mm256_setzero_ps();
-		__m256 vectorBinaryCoeff = _mm256_set1_ps(binaryCoeff);
-		for (int k = 1; k < 6; ++k) {
-			if (k % 2) {
-				result = _mm256_add_ps(result, vectorized);
-			}
-			else {
-				result = _mm256_sub_ps(result, vectorized);
-			}
+		__m256 numerator = _mm256_sub_ps(vectorized, vectorOnes);
+		__m256 denominator = _mm256_add_ps(vectorized, vectorOnes);
+		vectorized = _mm256_div_ps(numerator, denominator);
+		for (int k = 0; k < 10000; ++k) {
+			result = _mm256_add_ps(result, _mm256_div_ps(vectorized, _mm256_set1_ps(2.0*k + 1.0)));
+			vectorized = _mm256_mul_ps(vectorized, vectorized);
 			vectorized = _mm256_mul_ps(vectorized, vectorized);
 		}
+		result = _mm256_mul_ps(result, vectorTwos);
 		float* resultArray = (float*)&result;
 		input[i * blockSize] = resultArray[0];
 		input[i * blockSize + 1] = resultArray[1];
@@ -37,7 +29,6 @@ void avxVectorLog(float* input, int& n) {
 		input[i * blockSize + 5] = resultArray[5];
 		input[i * blockSize + 6] = resultArray[6];
 		input[i * blockSize + 7] = resultArray[7];
-
 	}
 }
 
