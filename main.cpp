@@ -46,11 +46,12 @@ int main(int argc, char *argv[]) {
         float* experiment2 = new float[n];
         memcpy(experiment1, data, n * sizeof(float));
         memcpy(experiment2, data, n * sizeof(float));
+
         baselineVectorLog(experiment1, n);
         std::cout << "Done baseline" << "\n";
         avxVectorLog(experiment2, n);
         for (int i = 0; i < n; ++i) {
-            std::cout << "baseline: " << experiment1[i] << ", avx:  " << experiment2[i] << "\n";
+            std::cout << "data: " << data[i] << ", " << "baseline: " << experiment1[i] << ", avx:  " << experiment2[i] << "\n";
         }
         delete [] experiment1;
         delete [] experiment2;
